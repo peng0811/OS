@@ -7,8 +7,10 @@
 void fin(){
     int num;
     int *ans=0;
-    printf("Input size: ");
-    scanf("%d",&num);
+    while(num < 0){
+        printf("Input size: ");
+        scanf("%d",&num);
+    }
     printf("ans: ");
     ans = malloc(sizeof(int)*num);
     ans[0]=0;

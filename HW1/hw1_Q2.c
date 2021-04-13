@@ -12,18 +12,7 @@ typedef struct{
     long fib_sequence[MAX_SEQUENCE];
     int sequence_size;
 }shared_data;
-
-void fin(shared_data *op){
-    int num;
-    int *ans=malloc(sizeof(int)*op->sequence_size);
-    ans[0]=0;
-    ans[1]=1;
-    op->fib_sequence[0]=1;
-    for(int i=0;i<op->sequence_size;i++){
-        ans[i+2]=ans[i+1]+ans[i];
-        op->fib_sequence[i+1] = ans[i+2];
-    }
-}
+void fin(shared_data *);
 int main(void)
 {   
     int status;
@@ -31,29 +20,22 @@ int main(void)
     pid_t pid;
     int *shm;
     shared_data *op; 
-   
-    
     shmid = shmget((key_t)1234,  sizeof(shared_data), IPC_CREAT | 0666);
     if (shmid < 0) {
         perror("shmget error");
         exit(-1);
     }
-   
-    
     shm = shmat(shmid, NULL, 0);
     if (shm == (int *)-1) {
         perror("shmat error");
         exit(-1);
     }
-
     op = (shared_data *)shm;
-    printf("size:");
-    scanf("%d",&op->sequence_size);
-    if(op->sequence_size > MAX_SEQUENCE){
-        printf("too larger");
-        exit(-1);
+    while(1){
+        printf("size:");
+        scanf("%d",&op->sequence_size);
+        if(op->sequence_size > 0 && op->sequence_size <= MAX_SEQUENCE)break;
     }
-
     pid = fork();
 
     switch(pid){
@@ -83,4 +65,16 @@ int main(void)
 
 
     return 0;
+}
+
+void fin(shared_data *op){
+    int num;
+    int *ans=malloc(sizeof(int)*op->sequence_size);
+    ans[0]=0;
+    ans[1]=1;
+    op->fib_sequence[0]=1;
+    for(int i=0;i<op->sequence_size-1;i++){
+        ans[i+2]=ans[i+1]+ans[i];
+        op->fib_sequence[i+1]=ans[i+2];
+    }
 }
