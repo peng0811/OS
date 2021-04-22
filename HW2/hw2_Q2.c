@@ -121,24 +121,22 @@ int main(int argc,char *argv[]){
         printf("%d ",arr[i]);
     }
     printf("\n");
-
-    parameters *P1=malloc(sizeof(parameters));
-    parameters *P2=malloc(sizeof(parameters));
-    parameters *P3=malloc(sizeof(parameters));
-    P1->left=0;
-    P1->right=(num-1)/2;
-    P2->left=(num-1)/2+1;
-    P2->right=num-1;
-    P3->left=0;
-    P3->right=num-1;
+    parameters **P=malloc(sizeof(parameters *)*3);
+    for(int i=0;i<3;i++)P[i]=malloc(sizeof(parameters));
+    P[0]->left=0;
+    P[0]->right=(num-1)/2;
+    P[1]->left=(num-1)/2+1;
+    P[1]->right=num-1;
+    P[2]->left=0;
+    P[2]->right=num-1;
 
     pthread_attr_init(&attr);
-    pthread_create(&tid[0],&attr,sub,(void *)P1);
-    pthread_create(&tid[1],&attr,sub,(void *)P2);
+    pthread_create(&tid[0],&attr,sub,(void *)P[0]);
+    pthread_create(&tid[1],&attr,sub,(void *)P[1]);
     pthread_join(tid[0],NULL);
     pthread_join(tid[1],NULL);
 
-    pthread_create(&tid[2],&attr,mergesub,(void *)P3);
+    pthread_create(&tid[2],&attr,mergesub,(void *)P[2]);
     pthread_join(tid[2],NULL);
 
     printf("after merge : ");
